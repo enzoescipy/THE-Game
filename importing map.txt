@@ -1,0 +1,1 @@
+tool > parameter_class > spell_list_of_class > monster_algorithm > fight_pattern > maingame
