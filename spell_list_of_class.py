@@ -16,20 +16,20 @@ class BloodSpear(Spell):
     red_roll = True
     green_roll = False
 
-    def direc_decide(self,namelist): #namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
+    def direc_decide(self,namelist,myapp): #namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
         namelistcopy = copy.copy(namelist)
         namelistcopy.pop(namelist.index("hero"))
-        printt("선택 가능 대상 : {0}".format(namelistcopy))
+        myapp.printt("선택 가능 대상 : {0}".format(namelistcopy))
         while (1):
-            direc = input("공격할 대상의 이름을 선택하여 주세요.")
+            direc = myapp.inputt("공격할 대상의 이름을 선택하여 주세요.")
             if direc in namelistcopy:
                 break
-            printt("잘못된 대상입니다.")
+            myapp.printt("잘못된 대상입니다.")
             direc = None
 
         self.temp_direc.append(direc)
 
-    def use(self,hero,monsterlist):
+    def use(self,hero,monsterlist,myapp):
         self.roll_all_color()
         r_ac = self.avail_count("red")
         g_ac = self.avail_count("green")
@@ -39,16 +39,16 @@ class BloodSpear(Spell):
         else:
             if g_ac == 1:
                 rd = self.get_dice_num_list("red")
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_atk.append(rd[0] + 5)
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 
             elif g_ac == 2:
                 rd = self.get_dice_num_list("red")
-                hero.change_health(hero.health + 5)
-                super().use_before_calc(hero, monsterlist)
+                hero.change_health(hero.health + 5,monsterlist,myapp)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_atk.append(rd[0] + 5)
-                printt("또한, 깊게 뻗어나오는 초록색 마력은 5의 체력을 회복시켰다.")
+                myapp.printt("또한, 깊게 뻗어나오는 초록색 마력은 5의 체력을 회복시켰다.")
 class BloodShield(Spell):
     def __init__(self):
         cls = BloodShield
@@ -64,10 +64,10 @@ class BloodShield(Spell):
     red_roll = True
     green_roll = False
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         r_ac = self.avail_count("red")
         g_ac = self.avail_count("green")
@@ -77,17 +77,17 @@ class BloodShield(Spell):
         else:
             if g_ac == 1:
                 rd = self.get_dice_num_list("red")
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def +=  rd[0] + 10
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
             elif g_ac == 2:
                 rd = self.get_dice_num_list("red")
-                hero.change_health(hero.health + 5)
-                super().use_before_calc(hero, monsterlist)
+                hero.change_health(hero.health + 5,monsterlist,myapp)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def +=  rd[0] + 10
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 
-                printt("또한, 깊게 뻗어나오는 초록색 마력은 5의 체력을 회복시켰다.")
+                myapp.printt("또한, 깊게 뻗어나오는 초록색 마력은 5의 체력을 회복시켰다.")
 
 class WeakenGas(Spell):
     def __init__(self):
@@ -106,10 +106,10 @@ class WeakenGas(Spell):
     green_roll = False  # 마찬가지
     only_one_green = False  # 초록 주사위 던지기처럼, 초록주사위 단 한개만 사용하고 다른 대가가 없는 스킬인지 여부. 이런 스킬은 무미건조한 대사가 출력되게 설정되어 있음.
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):  # use 메소드 오버라이딩
+    def use(self, hero, monsterlist,myapp):  # use 메소드 오버라이딩
         self.roll_all_color()
         r_ac = self.avail_count("red")  # 활성화된 붉은 주사위의 개수
         g_ac = self.avail_count("green")  # 활성화된 초록 주사위의 개수.
@@ -118,20 +118,20 @@ class WeakenGas(Spell):
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
             if g_ac == 1:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 for j in range(len(monsterlist)):
                     for i in range(hero.spell_use_list.index(self) , len(monsterlist[j].buff_list)):
                         monsterlist[j].buff_list_add(i, Weaken(3))
-                    printt("붉은 약화 가스가 적 {0} 을 향해 분출되어 남은 모든 행동에 3의 약화를 가했다!".format(monsterlist[j].name))
-                super().use_after_calc(hero, monsterlist)
+                    myapp.printt("붉은 약화 가스가 적 {0} 을 향해 분출되어 남은 모든 행동에 3의 약화를 가했다!".format(monsterlist[j].name))
+                super().use_after_calc(hero, monsterlist,myapp)
             elif g_ac == 2:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 for j in range(len(monsterlist)):
                     for i in range(hero.spell_use_list.index(self) , len(monsterlist[j].buff_list)):
                         monsterlist[j].buff_list_add(i, Weaken(5))
-                    printt("붉은 약화 가스가 적 {0} 을 향해 분출되어 남은 모든 행동에 5의 약화를 가했다!".format(monsterlist[j].name))
+                    myapp.printt("붉은 약화 가스가 적 {0} 을 향해 분출되어 남은 모든 행동에 5의 약화를 가했다!".format(monsterlist[j].name))
 
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 
             ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
 
@@ -151,14 +151,27 @@ class Weaken(Spell):
     blue_dice_list = []
     green_dice_list = []
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         for i in range(len(monsterlist)):
             if monsterlist[i].buff_list_in(self):
+                mindex = i
                 index = monsterlist[i].buff_list_find(self)
                 monsterlist[i].spell_use_list[index].temp_def -= self.weaken_amount
                 for j in range(len(monsterlist[i].spell_use_list[index].temp_atk)):
                     monsterlist[i].spell_use_list[index].temp_atk[j] -= self.weaken_amount
-                printt("약화 로 인하여 적의 공격력과 방어력이 {0} 씩 감소되었다!".format(self.weaken_amount))
+                myapp.printt("약화 로 인하여 적의 공격력과 방어력이 {0} 씩 감소되었다!".format(self.weaken_amount))
+                if mindex == 0:
+                    for i in range(len(self.temp_atk)):
+                        myapp.mn1attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                    myapp.mn1defencelied.setText(str(int(myapp.mn1defencelied.text()) + self.temp_def))
+                elif mindex == 1:
+                    for i in range(len(self.temp_atk)):
+                        myapp.mn2attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                    myapp.mn2defencelied.setText(str(int(myapp.mn2defencelied.text()) + self.temp_def))
+                elif mindex == 2:
+                    for i in range(len(self.temp_atk)):
+                        myapp.mn3attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                    myapp.mn3defencelied.setText(str(int(myapp.mn3defencelied.text()) + self.temp_def))
                 break
 
 
@@ -183,20 +196,20 @@ class RedPoisonSplay(Spell):
     green_roll = False
     only_one_green = False
 
-    def direc_decide(self, namelist):  # namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
+    def direc_decide(self, namelist,myapp):  # namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
         namelistcopy = copy.copy(namelist)
         namelistcopy.pop(namelist.index("hero"))
-        printt("선택 가능 대상 : {0}".format(namelistcopy))
+        myapp.printt("선택 가능 대상 : {0}".format(namelistcopy))
         while (1):
-            direc = input("공격할 대상의 이름을 선택하여 주세요.")
+            direc = myapp.inputt("공격할 대상의 이름을 선택하여 주세요.")
             if direc in namelistcopy:
                 break
-            printt("잘못된 대상입니다.")
+            myapp.printt("잘못된 대상입니다.")
             direc = None
 
         self.temp_direc.append(direc)
 
-    def use(self,hero,monsterlist):
+    def use(self,hero,monsterlist,myapp):
         self.roll_all_color()
         r_ac = self.avail_count("red")
         g_ac = self.avail_count("green")
@@ -205,23 +218,23 @@ class RedPoisonSplay(Spell):
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
             if g_ac == 1:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 for j in range(len(monsterlist)):
                     for i in range(3):
                         if monsterlist[j].name == self.temp_direc[0]:
                             monsterlist[j].turn_buff_list_add(i, Poison(3))
-                    printt("붉은 독극물이 적을 향해 살포 되어 3 턴 동안 독 3을 받는다!")
+                    myapp.printt("붉은 독극물이 적을 향해 살포 되어 3 턴 동안 독 3을 받는다!")
                 self.temp_direc = []
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
             elif g_ac == 2:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 for j in range(len(monsterlist)):
                     for i in range(3):
                         if monsterlist[j].name == self.temp_direc[0]:
                             monsterlist[j].turn_buff_list_add(i, Poison(5))
-                    printt("붉은 독극물이 적을 향해 살포 되어 3 턴 동안 독 5을 받는다!")
+                    myapp.printt("붉은 독극물이 적을 향해 살포 되어 3 턴 동안 독 5을 받는다!")
                 self.temp_direc = []
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 #독
 class Poison(Spell):
     def __init__(self,poison_amount):
@@ -238,11 +251,11 @@ class Poison(Spell):
     blue_dice_list = []
     green_dice_list = []
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         for i in range(len(monsterlist)):
             if monsterlist[i].turn_buff_list_in(self):
-                monsterlist[i].change_health(monsterlist[i].health - self.poison_amount)
-                printt("독 으로 인하여 적의 체력이 {0} 감소 되었다!".format(self.poison_amount))
+                monsterlist[i].change_health(monsterlist[i].health - self.poison_amount,monsterlist,myapp)
+                myapp.printt("독 으로 인하여 적의 체력이 {0} 감소 되었다!".format(self.poison_amount))
 
 
 class CausingBleeding(Spell):
@@ -262,20 +275,20 @@ class CausingBleeding(Spell):
     green_roll = False
     only_one_green = False
 
-    def direc_decide(self, namelist):  # namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
+    def direc_decide(self, namelist,myapp):  # namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
         namelistcopy = copy.copy(namelist)
         namelistcopy.pop(namelist.index("hero"))
-        printt("선택 가능 대상 : {0}".format(namelistcopy))
+        myapp.printt("선택 가능 대상 : {0}".format(namelistcopy))
         while (1):
-            direc = input("공격할 대상의 이름을 선택하여 주세요.")
+            direc = myapp.inputt("공격할 대상의 이름을 선택하여 주세요.")
             if direc in namelistcopy:
                 break
-            printt("잘못된 대상입니다.")
+            myapp.printt("잘못된 대상입니다.")
             direc = None
 
         self.temp_direc.append(direc)
 
-    def use(self,hero,monsterlist):
+    def use(self,hero,monsterlist,myapp):
         self.roll_all_color()
         r_ac = self.avail_count("red")
         g_ac = self.avail_count("green")
@@ -285,21 +298,21 @@ class CausingBleeding(Spell):
         else:
             rd = self.get_dice_num_list("red")
             if g_ac == 1:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_atk.append(rd[0] + rd[1] + rd[2])
                 for i in range(len(monsterlist)):
                     if monsterlist[i].name == self.temp_direc[0]:
                         monsterlist[i].all_turn_buff_list.append(Bleeding(2))
-                printt("적에게 2의 출혈을 일으켰다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("적에게 2의 출혈을 일으켰다.")
+                super().use_after_calc(hero, monsterlist,myapp)
             elif g_ac == 2:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_atk.append(rd[0] + rd[1] + rd[2])
                 for i in range(len(monsterlist)):
                     if monsterlist[i].name == self.temp_direc[0]:
                         monsterlist[i].all_turn_buff_list.append(Bleeding(5))
-                printt("적에게 5의 출혈을 일으켰다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("적에게 5의 출혈을 일으켰다.")
+                super().use_after_calc(hero, monsterlist,myapp)
 #출혈
 class Bleeding(Spell):
     def __init__(self,bleeding_amount):
@@ -316,11 +329,11 @@ class Bleeding(Spell):
     blue_dice_list = []
     green_dice_list = []
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         for i in range(len(monsterlist)):
             if self in monsterlist[i].all_turn_buff_list:
-                monsterlist[i].change_health(monsterlist[i].health - self.bleeding_amount)
-            printt("출혈로 인하여 적의 체력이 {0} 감소 되었다!".format(self.bleeding_amount))
+                monsterlist[i].change_health(monsterlist[i].health - self.bleeding_amount,monsterlist,myapp)
+            myapp.printt("출혈로 인하여 적의 체력이 {0} 감소 되었다!".format(self.bleeding_amount))
 
 ##푸른 마법
 class ArcaneArrow(Spell):
@@ -338,20 +351,20 @@ class ArcaneArrow(Spell):
     red_roll = False
     green_roll = False
 
-    def direc_decide(self, namelist):  # namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
+    def direc_decide(self, namelist,myapp):  # namelist는 전투에 참여중인 모든 캐릭터의 이름태그 목록
         namelistcopy = copy.copy(namelist)
         namelistcopy.pop(namelist.index("hero"))
-        printt("선택 가능 대상 : {0}".format(namelistcopy))
+        myapp.printt("선택 가능 대상 : {0}".format(namelistcopy))
         while (1):
-            direc = input("공격할 대상의 이름을 선택하여 주세요.")
+            direc = myapp.inputt("공격할 대상의 이름을 선택하여 주세요.")
             if direc in namelistcopy:
                 break
-            printt("잘못된 대상입니다.")
+            myapp.printt("잘못된 대상입니다.")
             direc = None
 
         self.temp_direc.append(direc)
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         b_ac = self.avail_count("blue")
         g_ac = self.avail_count("green")
@@ -360,17 +373,17 @@ class ArcaneArrow(Spell):
         else:
             if g_ac == 1:
                 bd = self.get_dice_num_list("blue")
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_atk.append(bd[0] + 1)
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 
             elif g_ac == 2:
                 bd = self.get_dice_num_list("blue")
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_atk.append(bd[0] + 7)
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 
-                printt("(당신은 이중 6의 공격력은 초록 마나에 의하여 보강되었음을 느낀다.)")
+                myapp.printt("(당신은 이중 6의 공격력은 초록 마나에 의하여 보강되었음을 느낀다.)")
 class ArcaneShield(Spell):
     def __init__(self):
         cls = ArcaneShield
@@ -386,10 +399,10 @@ class ArcaneShield(Spell):
     red_roll = False
     green_roll = True
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         b_ac = self.avail_count("blue")
         g_ac = self.avail_count("green")
@@ -398,18 +411,18 @@ class ArcaneShield(Spell):
         else:
             if g_ac == 1:
                 bd = self.get_dice_num_list("blue")
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def += bd[0] + 2
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
 
             elif g_ac == 2:
                 bd = self.get_dice_num_list("blue")
                 gd = self.get_dice_num_list("green")
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def += bd[0] + gd[1] + 2
-                super().use_after_calc(hero, monsterlist)
+                super().use_after_calc(hero, monsterlist,myapp)
                 hero.buff_list_add(hero.spell_use_list.index(self) + 1, ArcaneShieldshred())
-                printt("또한, 깊게 뻗어나가는 초록색 마력은 다음 행동의 방어력을 3 증가시켰다.")
+                myapp.printt("또한, 깊게 뻗어나가는 초록색 마력은 다음 행동의 방어력을 3 증가시켰다.")
 #비전 방패의 조각(초록 주사위가 추가 융합된 비전 방패를 마지막 턴에 사용했을 시)
 class ArcaneShieldshred(Spell):
     def __init__(self):
@@ -422,9 +435,11 @@ class ArcaneShieldshred(Spell):
     red_dice_list = []
     blue_dice_list = []
     green_dice_list = []
-    def use(self,hero,monsterlist):
+    def use(self,hero,monsterlist,myapp):
         hero.defence += 3
-        printt("비전 방패의 조각이 당신의 방어력을 3 증가시켰다!")
+        myapp.printt("비전 방패의 조각이 당신의 방어력을 3 증가시켰다!")
+        myapp.defencelied.setText('0')
+        myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
 
 class ArcaneAmplify(Spell):
     def __init__(self):
@@ -442,7 +457,7 @@ class ArcaneAmplify(Spell):
     red_roll = False #마찬가지
     green_roll = False #마찬가지
     only_one_green = False # 초록 주사위 던지기처럼, 초록주사위 단 한개만 사용하고 다른 대가가 없는 스킬인지 여부. 이런 스킬은 무미건조한 대사가 출력되게 설정되어 있음.
-    def use(self,hero,monsterlist): #use 메소드 오버라이딩
+    def use(self,hero,monsterlist,myapp): #use 메소드 오버라이딩
         self.roll_all_color()
         r_ac = self.avail_count("red") #활성화된 붉은 주사위의 개수
         g_ac = self.avail_count("green") #활성화된 파랑 주사위의 개수.
@@ -451,23 +466,23 @@ class ArcaneAmplify(Spell):
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
             if g_ac == 1:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 hero.act_point += 2
-                printt("당신의 초록 주사위가 2개 추가되었다.")
+                myapp.printt("당신의 초록 주사위가 2개 추가되었다.")
                 hero.buff_list_add(hero.spell_use_list.index(self) + 1, Amplify())
                 hero.buff_list_add(hero.spell_use_list.index(self) + 1, Amplify())
-                printt("당신의 다음 행동에 증폭 효과가 2개 추가되어 당신이 시전할 스킬을 먼저 복사하여 시전한다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("당신의 다음 행동에 증폭 효과가 2개 추가되어 당신이 시전할 스킬을 먼저 복사하여 시전한다.")
+                super().use_after_calc(hero, monsterlist,myapp)
                 ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
             elif g_ac == 2:
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 hero.act_point += 3
-                printt("당신의 초록 주사위가 3개 추가되었다.")
+                myapp.printt("당신의 초록 주사위가 3개 추가되었다.")
                 hero.buff_list_add(hero.spell_use_list.index(self) + 1, Amplify())
                 hero.buff_list_add(hero.spell_use_list.index(self) + 1, Amplify())
                 hero.buff_list_add(hero.spell_use_list.index(self) + 1, Amplify())
-                printt("당신의 다음 행동에 증폭 효과가 3개 추가되어 당신이 시전할 스킬을 먼저 복사하여 시전한다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("당신의 다음 행동에 증폭 효과가 3개 추가되어 당신이 시전할 스킬을 먼저 복사하여 시전한다.")
+                super().use_after_calc(hero, monsterlist,myapp)
 
 #증폭
 class Amplify(Spell):
@@ -481,27 +496,32 @@ class Amplify(Spell):
     red_dice_list = []
     blue_dice_list = []
     green_dice_list = []
-    def use(self,hero,monsterlist):
-        printt("비전 증폭의 효과로 {0}이 시전된다.".format(hero.spell_use_list[hero.buff_list_find(self)].name))
-        printt("[[비전 증폭의 효과 시작:")
+    def use(self,hero,monsterlist,myapp):
+        myapp.printt("비전 증폭의 효과로 {0}이 시전된다.".format(hero.spell_use_list[hero.buff_list_find(self)].name))
+        myapp.printt("[[비전 증폭의 효과 시작:")
 
         index = hero.buff_list_find(self)
 
-        hero.spell_use_list[index].pay_price(hero, monsterlist)
+        hero.spell_use_list[index].pay_price(hero, monsterlist,myapp)
 
         if hero.fault_bool == False:
-            hero.spell_use_list[index].use(hero, monsterlist)
+            hero.spell_use_list[index].use(hero, monsterlist,myapp)
 
         if hero.fault_bool == False:
             hero.attack += hero.spell_use_list[index].temp_atk
             hero.direction += hero.spell_use_list[index].temp_direc
             hero.defence += hero.spell_use_list[index].temp_def
 
+            for i in range(len(self.temp_atk)):
+                myapp.attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+            myapp.defencelied.setText('0')
+            myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
+
         hero.spell_use_list[index].temp_atk = []
         hero.spell_use_list[index].temp_def = 0
 
 
-        printt(":비전 증폭의 효과 종료]]")
+        myapp.printt(":비전 증폭의 효과 종료]]")
 
 class ManaBurst(Spell):
     def __init__(self):
@@ -521,10 +541,10 @@ class ManaBurst(Spell):
     green_roll = False  # 마찬가지
     only_one_green = False  # 초록 주사위 던지기처럼, 초록주사위 단 한개만 사용하고 다른 대가가 없는 스킬인지 여부. 이런 스킬은 무미건조한 대사가 출력되게 설정되어 있음.
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):  # use 메소드 오버라이딩
+    def use(self, hero, monsterlist,myapp):  # use 메소드 오버라이딩
         self.roll_all_color()  # 모든 색의 주사위를 굴려주는 메소드. 반드시 제일 먼저 시전한다.
         r_ac = self.avail_count("red")  # 활성화된 붉은 주사위의 개수
         g_ac = self.avail_count("green")  # 활성화된 파랑 주사위의 개수.
@@ -534,23 +554,23 @@ class ManaBurst(Spell):
         else:
             if g_ac == 1:
                 bd = self.get_dice_num_list("blue")  # 주사위 눈금을 얻는 코드.
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def += cut(bd[0] + bd[1] + bd[2] - 9)
                 B = Burst()
-                hero.mana.observer_add(True,B.show,0,B.use, B.name, lambda old, new, log: (old > new), B, hero, monsterlist)
+                hero.mana.observer_add(True,B.show,0,B.use, B.name, lambda old, new, log: (old > new), B, hero, monsterlist, myapp)
                 ObserverCenter.observing_center_add(hero.mana)
-                printt("다음 마나를 사용할 때, 스킬 효과 대신 마나 폭파로 인한 피해가 적용된다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("다음 마나를 사용할 때, 스킬 효과 대신 마나 폭파로 인한 피해가 적용된다.")
+                super().use_after_calc(hero, monsterlist,myapp)
                 ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
             if g_ac == 2:
                 bd = self.get_dice_num_list("blue")  # 주사위 눈금을 얻는 코드.
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def += cut(bd[0] + bd[1] + bd[2])
                 B = Burst()
-                hero.mana.observer_add(True,B.show,0,B.use, B.name, lambda old, new, log: (old > new), B, hero, monsterlist)
+                hero.mana.observer_add(True,B.show,0,B.use, B.name, lambda old, new, log: (old > new), B, hero, monsterlist, myapp)
                 ObserverCenter.observing_center_add(hero.mana)
-                printt("다음 마나를 사용할 때, 스킬 효과 대신 마나 폭파로 인한 피해가 적용된다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("다음 마나를 사용할 때, 스킬 효과 대신 마나 폭파로 인한 피해가 적용된다.")
+                super().use_after_calc(hero, monsterlist,myapp)
                 ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
 
 #폭파
@@ -565,16 +585,19 @@ class Burst(Spell):
     red_dice_list = []
     blue_dice_list = []
     green_dice_list = []
-    def use(self,hero,monsterlist):
-        printt("마나 폭파의 효과가 발생하였다!")
+    def use(self,hero,monsterlist,myapp):
+        myapp.specialbuffte.append("마나 폭파 효과 발동됨")
+        myapp.printt("마나 폭파의 효과가 발생하였다!")
         hero.fault_bool = True
-        printt("용사는 행동불능에 빠졌다!")
+        myapp.faultbtn.setEnabled(False)
+        myapp.printt("용사는 행동불능에 빠졌다!")
         delta = hero.mana.old_value - hero.mana.value
         monster = random.choice(monsterlist)
-        monster.change_health(monster.health - delta)
-        printt("거친 마나가 적 {0}의 방어력을 뚫고 몬스터의 체력을 {1} 없앴다!".format(monster.name,delta))
-    def show(self, observer): #observer에 자신이 속해있는 옵저버 리스트를 넣는다. always형태라도 그대로.
-        printt("폭파 : 다음 마나를 사용할 때, 차감된 마나 만큼 직접 공격한다.")
+        monster.change_health(monster.health - delta,monsterlist,myapp)
+        myapp.printt("거친 마나가 적 {0}의 방어력을 뚫고 몬스터의 체력을 {1} 없앴다!".format(monster.name,delta))
+    def show(self, observer,myapp): #observer에 자신이 속해있는 옵저버 리스트를 넣는다. always형태라도 그대로.
+        myapp.printt("폭파 : 다음 마나를 사용할 때, 차감된 마나 만큼 직접 공격한다.")
+        myapp.specialbuffte.append("폭파 : 다음 마나를 사용할 때, 차감된 마나 만큼 직접 공격한다.")
 
 class Overflow(Spell): #기본 템플릿 만들기 위함. 절대 깨기 귀찮아서 만든게 아님
     def __init__(self):
@@ -594,10 +617,10 @@ class Overflow(Spell): #기본 템플릿 만들기 위함. 절대 깨기 귀찮�
     green_roll = False #마찬가지
     only_one_green = False # 초록 주사위 던지기처럼, 초록주사위 단 한개만 사용하고 다른 대가가 없는 스킬인지 여부. 이런 스킬은 무미건조한 대사가 출력되게 설정되어 있음.
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self,hero,monsterlist): #use 메소드 오버라이딩
+    def use(self,hero,monsterlist,myapp): #use 메소드 오버라이딩
         self.roll_all_color() # 모든 색의 주사위를 굴려주는 메소드. 반드시 제일 먼저 시전한다.
         r_ac = self.avail_count("red") #활성화된 붉은 주사위의 개수
         g_ac = self.avail_count("green") #활성화된 파랑 주사위의 개수.
@@ -607,32 +630,36 @@ class Overflow(Spell): #기본 템플릿 만들기 위함. 절대 깨기 귀찮�
         else:
             if g_ac == 1:
                 bd = self.get_dice_num_list("blue")  # 주사위 눈금을 얻는 코드.
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def += cut(bd[0] + bd[1] + bd[2] + bd[3] - 10)
+                myapp.defencelied.setText('0')
+                myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
                 Oa = Overflowingatk()
                 #참고. 블랭크와 리얼의 조건식 함수는 반드시 서로 같아야만 한다. 이유는 생각해보시라.
                 for i in range(2):
                     hero.mana.observer_add(False, None, i, lambda : None, Oa.name,
                                            lambda old, new, log: (old - new >= 10),Oa)
                 hero.mana.observer_add(True, Oa.show, 2, Oa.use, Oa.name, lambda old, new, log: (old - new >= 10),
-                                       Oa, hero, monsterlist)
+                                       Oa, hero, monsterlist, myapp)
                 ObserverCenter.observing_center_add(hero.mana)
-                printt("10 이상의 마나를 3회 사용한 직후, (6d)의 공격력이 가산된다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("10 이상의 마나를 3회 사용한 직후, (6d)의 공격력이 가산된다.")
+                super().use_after_calc(hero, monsterlist,myapp)
                 ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
             if g_ac == 2:
                 bd = self.get_dice_num_list("blue")  # 주사위 눈금을 얻는 코드.
-                super().use_before_calc(hero, monsterlist)
+                super().use_before_calc(hero, monsterlist,myapp)
                 self.temp_def += cut(bd[0] + bd[1] + bd[2] + bd[3] - 10)
+                myapp.defencelied.setText('0')
+                myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
                 Oh = Overflowinghealth()
                 for i in range(2):
                     hero.mana.observer_add(False, None, i, lambda : None, Oh.name,
                                            lambda old, new, log: (old - new >= 10),Oh)
                 hero.mana.observer_add(True, Oh.show, 2, Oh.use, Oh.name, lambda old, new, log: (old - new >= 10),
-                                       Oh, hero, monsterlist)
+                                       Oh, hero, monsterlist, myapp)
                 ObserverCenter.observing_center_add(hero.mana)
-                printt("10 이상의 마나를 3회 사용한 직후, 적의 체력을(6d)만큼 직접 차감시킨다.")
-                super().use_after_calc(hero, monsterlist)
+                myapp.printt("10 이상의 마나를 3회 사용한 직후, 적의 체력을(6d)만큼 직접 차감시킨다.")
+                super().use_after_calc(hero, monsterlist,myapp)
                 ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
 class Overflowingatk(Spell):
     def __init__(self):
@@ -645,8 +672,9 @@ class Overflowingatk(Spell):
     red_dice_list = []
     blue_dice_list = []
     green_dice_list = []
-    def use(self,hero,monsterlist):
-        printt("오버플로우의 효과가 발생하였다!")
+    def use(self,hero,monsterlist,myapp):
+        myapp.specialbuffte.append("오버플로우 효과 발동됨")
+        myapp.printt("오버플로우의 효과가 발생하였다!")
         atkplus = [random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7)]
         hero.attack.append(sum(atkplus))
         monsternamelist = []
@@ -654,8 +682,10 @@ class Overflowingatk(Spell):
             monsternamelist.append(monster.name)
         monstername = random.choice(monsternamelist)
         hero.direction.append(monstername)
-        printt("{0}들이 나와, {1}의 공격력으로 {2}를 향해 공격한다.".format(atkplus,sum(atkplus)),monstername)
-    def show(self, observer): #observer에 자신이 속해있는 옵저버 리스트를 넣는다. always형태라도 그대로.
+        myapp.printt("{0}들이 나와, {1}의 공격력으로 {2}를 향해 공격한다.".format(atkplus,sum(atkplus),monstername))
+        for i in range(len(self.temp_atk)):
+            myapp.attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+    def show(self, observer,myapp): #observer에 자신이 속해있는 옵저버 리스트를 넣는다. always형태라도 그대로.
         obsnamelist = []
         stackindex = 0
         index = 0
@@ -669,8 +699,10 @@ class Overflowingatk(Spell):
                 if observer[stackindex][1][i][j][3] == self:
                     index = i
         #본문
-        printt("오버플로우 : 발동되면 (6d)의 공격력이 즉시 가산된다.")
-        printt("(현재 효과가 발동되기 까지 {0}회의 10 이상 마나소모가 필요합니다.)".format(index + 1))
+        myapp.printt("오버플로우 : 발동되면 (6d)의 공격력이 즉시 가산된다.")
+        myapp.printt("(현재 효과가 발동되기 까지 {0}회의 10 이상 마나소모가 필요합니다.)".format(index + 1))
+        myapp.specialbuffte.append("오버플로우 : 발동되면 (6d)의 공격력이 즉시 가산된다.")
+        myapp.specialbuffte.append("(현재 효과가 발동되기 까지 {0}회의 10 이상 마나소모가 필요합니다.)".format(index + 1))
 
 class Overflowinghealth(Spell):
     def __init__(self):
@@ -683,13 +715,14 @@ class Overflowinghealth(Spell):
     red_dice_list = []
     blue_dice_list = []
     green_dice_list = []
-    def use(self,hero,monsterlist):
-        printt("오버플로우의 효과가 발생하였다!")
+    def use(self,hero,monsterlist,myapp):
+        myapp.specialbuffte.append("오버플로우(초록주사위 융합됨) 효과 발동됨")
+        myapp.printt("오버플로우의 효과가 발생하였다!")
         healthminus = [random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7) + random.randrange(1,7)]
         monster = random.choice(monsterlist)
-        monster.change_health(monster.health - sum(healthminus))
-        printt("{0}이 나와, {1}의 몬스터 체력이 즉시 감소되었다.".format(healthminus,sum(healthminus)))
-    def show(self, observer): #observer에 자신이 속해있는 옵저버 리스트를 넣는다. always형태라도 그대로.
+        monster.change_health(monster.health - sum(healthminus),monsterlist,myapp)
+        myapp.printt("{0}이 나와, {1}의 몬스터 체력이 즉시 감소되었다.".format(healthminus,sum(healthminus)))
+    def show(self, observer,myapp): #observer에 자신이 속해있는 옵저버 리스트를 넣는다. always형태라도 그대로.
         obsnamelist = []
         stackindex = 0
         index = 0
@@ -703,8 +736,10 @@ class Overflowinghealth(Spell):
                 if observer[stackindex][1][i][j][3] == self:
                     index = i
         # 본문
-        printt("오버플로우 : 발동되면 (6d)만큼 방어력을 뚫고 적의 체력을 즉시 차감한다.")
-        printt("(현재 효과가 발동되기 까지 {0}회의 10 이상 마나소모가 필요합니다.)".format(index + 1))
+        myapp.printt("오버플로우 : 발동되면 (6d)만큼 방어력을 뚫고 적의 체력을 즉시 차감한다.")
+        myapp.printt("(현재 효과가 발동되기 까지 {0}회의 10 이상 마나소모가 필요합니다.)".format(index + 1))
+        myapp.specialbuffte.append("오버플로우 : 발동되면 (6d)만큼 방어력을 뚫고 적의 체력을 즉시 차감한다.")
+        myapp.specialbuffte.append("(현재 효과가 발동되기 까지 {0}회의 10 이상 마나소모가 필요합니다.)".format(index + 1))
 
 ##초록 마법
 class ThrowGreenDice(Spell):
@@ -720,23 +755,23 @@ class ThrowGreenDice(Spell):
     green_dice_list = [Dice("green")]
     one_green = True
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         g_ac = self.avail_count("green")
         if g_ac != 1:
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_atk.append(1)
             monsternamelist = []
             for monster in monsterlist:
                 monsternamelist.append(monster.name)
             monstername = random.choice(monsternamelist)
             self.temp_direc.append(monstername)
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
 
 class ManaCirculation(Spell):
     def __init__(self):
@@ -753,10 +788,10 @@ class ManaCirculation(Spell):
     red_roll = True
     green_roll = False
 
-    def direc_decide(self, namelist):
+    def direc_decide(self, namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         r_ac = self.avail_count("red")
         g_ac = self.avail_count("green")
@@ -766,16 +801,16 @@ class ManaCirculation(Spell):
         else:
             if (r_ac == 0) and (b_ac != 0):
                 bd = self.get_dice_num_list("blue")
-                hero.change_health(hero.health + sum(bd))
-                self.use_before_calc(hero, monsterlist)
-                self.use_after_calc(hero, monsterlist)
-                printt("그리고, 당신은 푸른 마나 주사위를 희생하여 {0}의 체력을 얻었다.".format(sum(bd)))
+                hero.change_health(hero.health + sum(bd),monsterlist,myapp)
+                self.use_before_calc(hero, monsterlist,myapp)
+                self.use_after_calc(hero, monsterlist,myapp)
+                myapp.printt("그리고, 당신은 푸른 마나 주사위를 희생하여 {0}의 체력을 얻었다.".format(sum(bd)))
             elif (r_ac != 0) and (b_ac == 0):
                 rd = self.get_dice_num_list("red")
-                hero.change_mana(hero.mana.value + sum(rd))
-                self.use_before_calc(hero, monsterlist)
-                self.use_after_calc(hero, monsterlist)
-                printt("그리고, 당신은  붉은 마나 주사위를 희생하여 {0}의 마나를 얻었다.".format(sum(rd)))
+                hero.change_mana(hero.mana.value + sum(rd),monsterlist,myapp)
+                self.use_before_calc(hero, monsterlist,myapp)
+                self.use_after_calc(hero, monsterlist,myapp)
+                myapp.printt("그리고, 당신은  붉은 마나 주사위를 희생하여 {0}의 마나를 얻었다.".format(sum(rd)))
 class LowClassEarthSpiritsEmploy(Spell):
     def __init__(self):
         cls = LowClassEarthSpiritsEmploy
@@ -792,10 +827,10 @@ class LowClassEarthSpiritsEmploy(Spell):
     red_roll = True
     green_roll = False
 
-    def direc_decide(self,namelist):
+    def direc_decide(self,namelist,myapp):
         return
 
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         r_ac = self.avail_count("red")
         g_ac = self.avail_count("green")
@@ -810,9 +845,9 @@ class LowClassEarthSpiritsEmploy(Spell):
                     spirit_def = sum(bd)
                     spirit.temp_def = spirit_def
                     hero.spell_use_list.append(spirit)
-                self.use_before_calc(hero, monsterlist)
-                self.use_after_calc(hero, monsterlist)
-                printt("그리고, 당신은 녹색 마나를 이용하여 4마리의 하급 대지의 정령을 소환하였다!")
+                self.use_before_calc(hero, monsterlist,myapp)
+                self.use_after_calc(hero, monsterlist,myapp)
+                myapp.printt("그리고, 당신은 녹색 마나를 이용하여 4마리의 하급 대지의 정령을 소환하였다!")
 
             elif (r_ac != 0) and (b_ac == 0):
                 rd = self.get_dice_num_list("red")
@@ -829,9 +864,9 @@ class LowClassEarthSpiritsEmploy(Spell):
 
                     hero.spell_use_list.append(spirit)
 
-                self.use_before_calc(hero, monsterlist)
-                self.use_after_calc(hero, monsterlist)
-                printt("그리고, 당신은 녹색 마나를 이용하여 4마리의 하급 대지의 정령을 소환하였다!")
+                self.use_before_calc(hero, monsterlist,myapp)
+                self.use_after_calc(hero, monsterlist,myapp)
+                myapp.printt("그리고, 당신은 녹색 마나를 이용하여 4마리의 하급 대지의 정령을 소환하였다!")
 #하급 대지의 정령
 class LowClassEarthSpirit(Spell):
     def __init__(self):
@@ -865,10 +900,10 @@ class OwnerKick(Spell): #기본 템플릿 만들기 위함. 절대 깨기 귀찮
     green_roll = True #마찬가지
     only_one_green = False # 초록 주사위 던지기처럼, 초록주사위 단 한개만 사용하고 다른 대가가 없는 스킬인지 여부. 이런 스킬은 무미건조한 대사가 출력되게 설정되어 있음.
 
-    def direc_decide(self,namelist):
+    def direc_decide(self,namelist,myapp):
         return
 
-    def use(self,hero,monsterlist): #use 메소드 오버라이딩
+    def use(self,hero,monsterlist,myapp): #use 메소드 오버라이딩
         self.roll_all_color() # 모든 색의 주사위를 굴려주는 메소드. 반드시 제일 먼저 시전한다.
         r_ac = self.avail_count("red") #활성화된 붉은 주사위의 개수
         g_ac = self.avail_count("green") #활성화된 파랑 주사위의 개수.
@@ -877,12 +912,12 @@ class OwnerKick(Spell): #기본 템플릿 만들기 위함. 절대 깨기 귀찮
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
             gd = self.get_dice_num_list("green") #주사위 눈금을 얻는 코드.
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             for i in range(len(monsterlist)):
                 self.temp_atk.append(1000000 * (gd[0] + gd[1] + gd[2]))# 최종적으로 올릴 공격력, 방어력을 temp.atk와 temp.def 에 쓴 후 그 앞뒤에 before, after use 메소드를 집어넣으면 기본 끗!
                 self.temp_direc.append(monsterlist[i].name)
             self.temp_def += 1000000 * (gd[0] + gd[1] + gd[2])
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
             ##추가. 만일 초록 주사위를 부 주사위로 사용할때 그 눈금값이 필요하다면, 반드시 첫번째 ([0]) 은 무시하고 쓸 것.
 ################################################################
 
@@ -899,16 +934,16 @@ class SlimeJump(Spell):
     blue_dice_list = []
     green_dice_list = [Dice("green")]
     only_one_green = True
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         g_ac = self.avail_count("green")
         if g_ac != 1:
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_atk.append(3)
             self.temp_direc.append("hero")
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
 
 class SlimeGuard(Spell):
     def __init__(self):
@@ -922,15 +957,15 @@ class SlimeGuard(Spell):
     blue_dice_list = []
     green_dice_list = [Dice("green")]
     only_one_green = True
-    def use(self,hero,monsterlist):
+    def use(self,hero,monsterlist,myapp):
         self.roll_all_color()
         g_ac = self.avail_count("green")
         if g_ac != 1:
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_def += 3
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
 
 class SlimePowerJump(Spell):
     def __init__(self):
@@ -946,7 +981,7 @@ class SlimePowerJump(Spell):
     blue_roll = True
     red_roll = False
     green_roll = False
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         b_ac = self.avail_count("blue")
         g_ac = self.avail_count("green")
@@ -954,10 +989,10 @@ class SlimePowerJump(Spell):
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
             bd = self.get_dice_num_list("blue")
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_atk.append(bd[0] + bd[1] + bd[2] - 3)
             self.temp_direc.append("hero")
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
 
 
 #stone_golem 마법
@@ -973,16 +1008,16 @@ class StoneGolemBoom(Spell):
     blue_dice_list = []
     green_dice_list = [Dice("green")]
     only_one_green = True
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         g_ac = self.avail_count("green")
         if g_ac != 1:
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_atk.append(7)
             self.temp_direc.append("hero")
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
 
 class StoneGolemWall(Spell):
     def __init__(self):
@@ -996,15 +1031,15 @@ class StoneGolemWall(Spell):
     blue_dice_list = []
     green_dice_list = [Dice("green")]
     only_one_green = True
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         g_ac = self.avail_count("green")
         if g_ac != 1:
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_def += 8
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist, myapp)
 
 class StoneGolemPowerBoom(Spell):
     def __init__(self):
@@ -1020,7 +1055,7 @@ class StoneGolemPowerBoom(Spell):
     blue_roll = True
     red_roll = False
     green_roll = False
-    def use(self, hero, monsterlist):
+    def use(self, hero, monsterlist,myapp):
         self.roll_all_color()
         b_ac = self.avail_count("blue")
         g_ac = self.avail_count("green")
@@ -1028,9 +1063,9 @@ class StoneGolemPowerBoom(Spell):
             raise Exception("주사위 활성화 오류. 관리자 호출 요망")
         else:
             bd = self.get_dice_num_list("blue")
-            super().use_before_calc(hero, monsterlist)
+            super().use_before_calc(hero, monsterlist,myapp)
             self.temp_atk.append(bd[0] + bd[1] + bd[2] + bd[3] + bd[4] + bd[5])
             self.temp_direc.append("hero")
-            super().use_after_calc(hero, monsterlist)
+            super().use_after_calc(hero, monsterlist,myapp)
 
 ##test##

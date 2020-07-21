@@ -34,10 +34,38 @@ class Character:
         self.bag_list = []
         self.bag_name_list = []
 
-    def show_stat(self):
-        printt('붉은 마력 주사위:{0}개 (체력 {1})'.format(self.health_dice, self.health))
-        printt('푸른 마력 주사위:{0}개 (마나 {1})'.format(self.mana_dice, self.mana.value))
-        printt('초록 마력 주사위 :{0} / {1}개'.format(self.act_point, self.max_act_point))
+    def show_stat(self,monsterlist,myapp):
+        if self not in monsterlist:
+            myapp.healthlied.setText(str(self.health))
+            myapp.reddicelied.setText(str(self.health_dice))
+            myapp.manalied.setText(str(self.mana.value))
+            myapp.bluedicelied.setText(str(self.mana_dice))
+            myapp.maxactlied.setText(str(self.max_act_point))
+            myapp.actlied.setText(str(self.act_point))
+        elif self in monsterlist:
+            index = monsterlist.index(self)
+            if index == 0:
+                myapp.mn1healthlied.setText(str(self.health))
+                myapp.mn1reddicelied.setText(str(self.health_dice))
+                myapp.mn1manalied.setText(str(self.mana.value))
+                myapp.mn1bluedicelied.setText(str(self.mana_dice))
+                myapp.mn1maxactlied.setText(str(self.max_act_point))
+                myapp.mn1actlied.setText(str(self.act_point))
+            elif index == 1:
+                myapp.mn2healthlied.setText(str(self.health))
+                myapp.mn2reddicelied.setText(str(self.health_dice))
+                myapp.mn2manalied.setText(str(self.mana.value))
+                myapp.mn2bluedicelied.setText(str(self.mana_dice))
+                myapp.mn2maxactlied.setText(str(self.max_act_point))
+                myapp.mn2actlied.setText(str(self.act_point))
+            elif index == 2:
+                myapp.mn3healthlied.setText(str(self.health))
+                myapp.mn3reddicelied.setText(str(self.health_dice))
+                myapp.mn3manalied.setText(str(self.mana.value))
+                myapp.mn3bluedicelied.setText(str(self.mana_dice))
+                myapp.mn3maxactlied.setText(str(self.max_act_point))
+                myapp.mn3actlied.setText(str(self.act_point))
+
 
     def add_spell(self, spell):
         self.spell_list.append(spell)
@@ -110,7 +138,7 @@ class Character:
             return "Error!"
         return buffindex
 
-    def change_health(self, health):  # 음수를 넣으면 에러 반환, 이외의 0과 양의 정수를 넣으면 그것으로 체력값 변동, None 넣으면 갱신
+    def change_health(self, health, monsterlist=None, myapp=None):  # 음수를 넣으면 에러 반환, 이외의 0과 양의 정수를 넣으면 그것으로 체력값 변동, None 넣으면 갱신
         if health == None:
             self.health_dice = int(self.health / Character.healthtodice)
         elif health <= 0:
@@ -122,7 +150,31 @@ class Character:
             self.health = health
             self.health_dice = int(self.health / Character.healthtodice)
 
-    def change_mana(self, mana):  # 음수를 넣으면 시스템 에러를 띄운다. 따라서 이에 대한 예외처리를 반드시 해야만 한다.
+        if monsterlist == None or myapp == None:
+            return
+
+        index = None
+        if self in monsterlist:
+            index = monsterlist.index(self)
+        else:
+            index = -1
+
+        if index == -1:
+            myapp.healthlied.setText(str(self.health))
+            myapp.reddicelied.setText(str(self.health_dice))
+        elif index == 0:
+            myapp.mn1healthlied.setText(str(self.health))
+            myapp.mn1reddicelied.setText(str(self.health_dice))
+        elif index == 1:
+            myapp.mn2healthlied.setText(str(self.health))
+            myapp.mn2reddicelied.setText(str(self.health_dice))
+        elif index == 2:
+            myapp.mn3healthlied.setText(str(self.health))
+            myapp.mn3reddicelied.setText(str(self.health_dice))
+
+
+
+    def change_mana(self, mana,monsterlist=None, myapp=None):  # 음수를 넣으면 시스템 에러를 띄운다. 따라서 이에 대한 예외처리를 반드시 해야만 한다.
         if mana == None:
             self.mana_dice = int(self.mana.value / Character.manatodice)
         elif mana < 0:
@@ -131,7 +183,30 @@ class Character:
             self.mana.change(mana)
             self.mana_dice = int(self.mana.value / Character.manatodice)
 
-    def change_actpoint(self, actpoint):
+        if monsterlist == None or myapp == None:
+            return
+
+        index = None
+        if self in monsterlist:
+            index = monsterlist.index(self)
+        else:
+            index = -1
+
+        if index == -1:
+            myapp.manalied.setText(str(self.mana.value))
+            myapp.bluedicelied.setText(str(self.mana_dice))
+        elif index == 0:
+            myapp.mn1manalied.setText(str(self.mana.value))
+            myapp.mn1bluedicelied.setText(str(self.mana_dice))
+        elif index == 1:
+            myapp.mn2manalied.setText(str(self.mana.value))
+            myapp.mn2bluedicelied.setText(str(self.mana_dice))
+        elif index == 2:
+            myapp.mn3manalied.setText(str(self.mana.value))
+            myapp.mn3bluedicelied.setText(str(self.mana_dice))
+
+
+    def change_actpoint(self, actpoint,monsterlist=None, myapp=None):
         if actpoint == None:
             pass
         elif actpoint < 0:
@@ -139,6 +214,29 @@ class Character:
             return "Error!"
         elif actpoint >= 0:
             self.act_point = actpoint
+
+        if monsterlist == None or myapp == None:
+            return
+
+        index = None
+        if self in monsterlist:
+            index = monsterlist.index(self)
+        else:
+            index = -1
+
+        if index == -1:
+            myapp.maxactlied.setText(str(self.max_act_point))
+            myapp.actlied.setText(str(self.act_point))
+        elif index == 0:
+            myapp.mn1maxactlied.setText(str(self.max_act_point))
+            myapp.mn1actlied.setText(str(self.act_point))
+        elif index == 1:
+            myapp.mn2maxactlied.setText(str(self.max_act_point))
+            myapp.mn2actlied.setText(str(self.act_point))
+        elif index == 2:
+            myapp.mn3maxactlied.setText(str(self.max_act_point))
+            myapp.mn3actlied.setText(str(self.act_point))
+
         #주의. 항상 체력을 바꿔서 체력 주사위를 바꿀 것. 즉, 방어 주문을 사용할 시에 그 댓가를 self.health_dice 의 값을 직접
         #바꾸어서 치루게 하면 오류 발생. 반드시 주사위 사용 수 * 환산비율 만큼의 체력을 use_health 메서드로 없애는 식으로 접근할것.
 
@@ -168,6 +266,7 @@ class Character:
 
     def death_initialize(self):
         self.death = False
+
 
 
 
@@ -249,7 +348,7 @@ class Spell:
         if self.green_roll == True:
             self.roll_all("green")
 
-    def pay_price(self,hero,monsterlist):
+    def pay_price(self,hero,monsterlist,myapp):
         owner = None
         ownertype = ""
         for i in range(len(monsterlist)):
@@ -265,35 +364,30 @@ class Spell:
 
 
         if owner.fault_bool == True:
-            printt('당신은 가만히 있었다...')
+            myapp.printt('당신은 가만히 있었다...')
         else:
-            printt('{0}을 사용하는 대가는... {1} 붉은 마력 주사위, {2} 푸른 마력 주사위, {3} 초록 마력 주사위.'.format(self.name,
+            myapp.printt('{0}을 사용하는 대가는... {1} 붉은 마력 주사위, {2} 푸른 마력 주사위, {3} 초록 마력 주사위.'.format(self.name,
                                                                                           self.avail_count("red"),
                                                                                           self.avail_count("blue"),
                                                                                           self.avail_count("green")))
             if owner.mana.value + (-1) * self.avail_count("blue") * Character.manatodice < 0: # .change_mana메서드는 바꿀 마나가 음수면 경고 문자열 출력하므로, 이를 이용.
-                printt('그러나 대가를 치를 푸른 마력 주사위가 부족하여 아무런 행동도 할 수 없었다...')
+                myapp.printt('그러나 대가를 치를 푸른 마력 주사위가 부족하여 아무런 행동도 할 수 없었다...')
                 owner.fault_bool = True
                 return
             elif owner.health + (-1) * self.avail_count("red") * Character.healthtodice <= 0:
-                printt('그러나 대가를 치를 붉은 마력 주사위가 부족하여 아무런 행동도 할 수 없었다...')
+                myapp.printt('그러나 대가를 치를 붉은 마력 주사위가 부족하여 아무런 행동도 할 수 없었다...')
                 owner.fault_bool = True
                 return
             elif owner.act_point - self.avail_count("green") < 0:
-                printt('그러나 대가를 치를 초록 마력 주사위가 부족하여 아무런 행동도 할 수 없었다...')
+                myapp.printt('그러나 대가를 치를 초록 마력 주사위가 부족하여 아무런 행동도 할 수 없었다...')
                 owner.fault_bool = True
                 return
 
-            owner.change_mana(owner.mana.value + (-1) * self.avail_count("blue") * Character.manatodice)
-            owner.change_health(owner.health + (-1) * self.avail_count("red") * Character.healthtodice)
-            owner.change_actpoint(owner.act_point - self.avail_count("green"))
+            owner.change_mana(owner.mana.value + (-1) * self.avail_count("blue") * Character.manatodice,monsterlist,myapp)
+            owner.change_health(owner.health + (-1) * self.avail_count("red") * Character.healthtodice,monsterlist,myapp)
+            owner.change_actpoint(owner.act_point - self.avail_count("green"),monsterlist,myapp)
 
-
-            if ownertype == "hero":
-                printt("나의...")
-            elif ownertype == "monster":
-                printt("상대의...")
-            owner.show_stat()
+            owner.show_stat(monsterlist,myapp)
 
 
 
@@ -328,46 +422,71 @@ class Spell:
                 availablelist.append(dice.available)
         return availablelist.count(True)
 
-    def use_before_calc(self,hero,monsterlist):
+    def use_before_calc(self,hero,monsterlist,myapp):
+        index = None
         for monster in monsterlist:
             if self in monster.spell_use_list:
-                printt("몬스터 {0} 은(는) {1}을 시전했다.".format(monster.name, self.name))
-                print("이윽고는 당신을 향해,", end='')
-        if self in hero.spell_use_list:
-            printt("당신은 {0}을 시전했다.".format(self.name))
-            print("주문 시전을 위해,", end='')
+                myapp.printt("몬스터 {0} 은(는) {1}을 시전했다.".format(monster.name, self.name))
+                myapp.printt("이윽고는 당신을 향해,", end='')
+                index = monsterlist.index(monster)
 
+        if self in hero.spell_use_list:
+            myapp.printt("당신은 {0}을 시전했다.".format(self.name))
+            myapp.printt("주문 시전을 위해,", end='')
+            index = -1
 
         no_roll = True
         if self.avail_count("red") != 0 and self.red_roll == True:
-            printt("차분하게 붉은 마력 주사위를 굴렸다.")
-            printt("{0}(들)이 나왔다!".format(self.get_dice_num_list("red")))
+            myapp.printt("차분하게 붉은 마력 주사위를 굴렸다.")
+            myapp.printt("{0}(들)이 나왔다!".format(self.get_dice_num_list("red")))
             no_roll = False
         if self.avail_count("blue") != 0 and self.blue_roll == True:
-            printt("차분하게 푸른 마력 주사위를 굴렸다.")
-            printt("{0}(들)이 나왔다!".format(self.get_dice_num_list("blue")))
+            myapp.printt("차분하게 푸른 마력 주사위를 굴렸다.")
+            myapp.printt("{0}(들)이 나왔다!".format(self.get_dice_num_list("blue")))
             no_roll = False
         if self.avail_count("green") != 0 and self.avail_count("green") != 1 and self.green_roll == True:
-            printt("차분하게 초록 마력 주사위를 굴렸다.")
+            myapp.printt("차분하게 초록 마력 주사위를 굴렸다.")
             temp = self.get_dice_num_list("green")
             temp.pop(0)
-            printt("{0}(들)이 나왔다!".format(temp))
+            myapp.printt("{0}(들)이 나왔다!".format(temp))
             no_roll = False
         if no_roll == True:
-            printt("음...아무런 주사위도 굴리지 않았다.")
+            myapp.printt("음...아무런 주사위도 굴리지 않았다.")
+
+
+        if index == -1:
+            myapp.redrollresultlied.setText(str(self.get_dice_num_list("red")))
+            myapp.bluerollresultlied.setText(str(self.get_dice_num_list("blue")))
+            myapp.greenrollresultlied.setText(str(self.get_dice_num_list("green")))
+        elif index == 0:
+            myapp.mn1redrollresultlied.setText(str(self.get_dice_num_list("red")))
+            myapp.mn1bluerollresultlied.setText(str(self.get_dice_num_list("blue")))
+            myapp.mn1greenrollresultlied.setText(str(self.get_dice_num_list("green")))
+        elif index == 1:
+            myapp.mn2redrollresultlied.setText(str(self.get_dice_num_list("red")))
+            myapp.mn2bluerollresultlied.setText(str(self.get_dice_num_list("blue")))
+            myapp.mn2greenrollresultlied.setText(str(self.get_dice_num_list("green")))
+        elif index == 2:
+            myapp.mn3redrollresultlied.setText(str(self.get_dice_num_list("red")))
+            myapp.mn3bluerollresultlied.setText(str(self.get_dice_num_list("blue")))
+            myapp.mn3greenrollresultlied.setText(str(self.get_dice_num_list("green")))
 
         #if self.temp_atk != 0:
-        #    printt("이번 행동에 미리 {0}의 공격력이 부여되어 있음을 느꼈다.".format(self.temp_atk))
+        #    myapp.printt("이번 행동에 미리 {0}의 공격력이 부여되어 있음을 느꼈다.".format(self.temp_atk))
         #if self.temp_def != 0:
-        #    printt("이번 행동에 미리 {0}의 방어력이 부여되어 있음을 느꼈다.".format(self.temp_def))
-    def use_after_calc(self,hero,monsterlist):
+        #    myapp.printt("이번 행동에 미리 {0}의 방어력이 부여되어 있음을 느꼈다.".format(self.temp_def))
+    def use_after_calc(self,hero,monsterlist,myapp):
         monstertrue = False
+        index = None
+        if self in hero.spell_use_list:
+            myapp.printt("당신에게서 ", end='')
+            index = -1
         for monster in monsterlist:
             if self in monster.spell_use_list:
-                print("몬스터로부터 ", end='')
+                myapp.printt("몬스터로부터 ", end='')
                 monstertrue = True
-        if self in hero.spell_use_list:
-            print("당신에게서 ", end='')
+                index = monsterlist.index(monster)
+
 
         if monstertrue == True:
             ismonsatkzero = False
@@ -381,44 +500,82 @@ class Spell:
 
 
             if ismonsatkzero == True and self.temp_def == 0:
-                printt("아무런 방어력도, 공격력도 만들어지지 않았다.")
+                myapp.printt("아무런 방어력도, 공격력도 만들어지지 않았다.")
             elif self.only_one_green == True or self.main_resource_kinds == 'Nothing':
                 if ismonsatknone == True:
-                    printt('{0}의 공격력과 {1}의 방어력이 만들어졌다...'.format(0, self.temp_def))
+                    myapp.printt('{0}의 공격력과 {1}의 방어력이 만들어졌다...'.format(0, self.temp_def))
                 else:
-                    printt('{0}의 공격력과 {1}의 방어력이 만들어졌다...'.format(self.temp_atk[0], self.temp_def))
+                    myapp.printt('{0}의 공격력과 {1}의 방어력이 만들어졌다...'.format(self.temp_atk[0], self.temp_def))
             elif self.main_resource_kinds == 'red':
-                printt('붉게 타오르는 양의 마력이 {0}의 공격력과 {1}의 방어력을 만들어냈다...'.format(self.temp_atk[0], self.temp_def))
+                myapp.printt('붉게 타오르는 양의 마력이 {0}의 공격력과 {1}의 방어력을 만들어냈다...'.format(self.temp_atk[0], self.temp_def))
             elif self.main_resource_kinds == 'blue':
-                printt('푸르게 솟아오르는 음의 마력이 {0}의 공격력과 {1}의 방어력을 만들어냈다...'.format(self.temp_atk[0], self.temp_def))
+                myapp.printt('푸르게 솟아오르는 음의 마력이 {0}의 공격력과 {1}의 방어력을 만들어냈다...'.format(self.temp_atk[0], self.temp_def))
             elif self.main_resource_kinds == 'green':
-                printt('초록색의 뻗어나오는 조화의 마력이 {0}의 공격력과 {1}의 방어력을 만들어냈다...'.format(self.temp_atk[0], self.temp_def))
+                myapp.printt('초록색의 뻗어나오는 조화의 마력이 {0}의 공격력과 {1}의 방어력을 만들어냈다...'.format(self.temp_atk[0], self.temp_def))
+
+            if index == 0:
+                myapp.mn1attackte.clear()
+                for i in range(len(self.temp_atk)):
+                    myapp.mn1attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                myapp.mn1defencelied.setText('0')
+                myapp.mn1defencelied.setText(str(int(myapp.mn1defencelied.text()) + self.temp_def))
+            elif index == 1:
+                myapp.mn2attackte.clear()
+                for i in range(len(self.temp_atk)):
+                    myapp.mn2attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                myapp.mn2defencelied.setText('0')
+                myapp.mn2defencelied.setText(str(int(myapp.mn2defencelied.text()) + self.temp_def))
+            elif index == 2:
+                myapp.mn3attackte.clear()
+                for i in range(len(self.temp_atk)):
+                    myapp.mn3attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                myapp.mn3defencelied.setText('0')
+                myapp.mn3defencelied.setText(str(int(myapp.mn3defencelied.text()) + self.temp_def))
         else:
             if self.temp_atk == [] and self.temp_def == 0:
-                printt("아무런 방어력도, 공격력도 만들어지지 않았다.")
+                myapp.printt("아무런 방어력도, 공격력도 만들어지지 않았다.")
+
+                myapp.attackte.clear()
+                for i in range(len(self.temp_atk)):
+                    myapp.attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                myapp.defencelied.setText("0")
+                myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
+
                 return
 
             if self.main_resource_kinds == 'red':
-                print('붉게 타오르는 양의 마력이 ',end='')
+                myapp.printt('붉게 타오르는 양의 마력이 ',end='')
             elif self.main_resource_kinds == 'blue':
-                print('푸르게 솟아오르는 음의 마력이 ',end='')
+                myapp.printt('푸르게 솟아오르는 음의 마력이 ',end='')
             elif self.main_resource_kinds == 'green':
-                print('초록색의 뻗어나오는 조화의 마력이 ',end='')
+                myapp.printt('초록색의 뻗어나오는 조화의 마력이 ',end='')
 
             if self.temp_atk == [] and self.temp_def != 0:
-                printt("{0}의 방어력을 만들어냈다.".format(self.temp_def))
+                myapp.printt("{0}의 방어력을 만들어냈다.".format(self.temp_def))
+
+                myapp.attackte.clear()
+                for i in range(len(self.temp_atk)):
+                    myapp.attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+                myapp.defencelied.setText("0")
+                myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
+
                 return
             elif self.temp_atk != [] and self.temp_def != 0:
-                printt("{0}의 방어력을 만들어냈다. 또한,".format(self.temp_def))
-                printt("적 {0} 에게 각각 {1}의 공격을 가하였다.".format(self.temp_direc, self.temp_atk))
+                myapp.printt("{0}의 방어력을 만들어냈다. 또한,".format(self.temp_def))
+                myapp.printt("적 {0} 에게 각각 {1}의 공격을 가하였다.".format(self.temp_direc, self.temp_atk))
             elif self.temp_atk != [] and self.temp_def == 0:
-                printt("적 {0} 에게 각각 {1}의 공격을 가하였다.".format(self.temp_direc, self.temp_atk))
+                myapp.printt("적 {0} 에게 각각 {1}의 공격을 가하였다.".format(self.temp_direc, self.temp_atk))
 
+            myapp.attackte.clear()
+            for i in range(len(self.temp_atk)):
+                myapp.attackte.append(str(self.temp_direc[i]) + " / " + str(self.temp_atk[i]))
+            myapp.defencelied.setText("0")
+            myapp.defencelied.setText(str(int(myapp.defencelied.text()) + self.temp_def))
 
-    def use(self,hero,monsterlist):  # 굴려진 다이스를 가지고 실제 주문력, 방어력을 계산\
+    def use(self,hero,monsterlist,myapp):  # 굴려진 다이스를 가지고 실제 주문력, 방어력을 계산\
         pass
 
-    def direc_decide(self,namelist):
+    def direc_decide(self,namelist,myapp):
         pass
 class Item:
     name = None
@@ -442,15 +599,15 @@ class Item:
 
         self.ismother = True
 
-    def buy(self,hero):
+    def buy(self,hero,myapp):
         if hero.money - self.price < 0:
-            printt("돈이 부족합니다.")
+            myapp.printt("돈이 부족합니다.")
         else:
             hero.money -= self.price
             hero.bag_list.append(self)
             hero.bag_name_list.append(self.name)
 
-    def use(self,hero):
+    def use(self,hero,monsterlist,myapp):
         pass
 
 

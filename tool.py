@@ -3,10 +3,14 @@ import time
 import copy
 import random
 
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5 import QtTest
+class TTsig(QThread):
+    inputsig = pyqtSignal(str)
 
-def printt(string): #딜레이가 있는 print. 단 sep와 end를 사용할 수 없다ㅠㅠㅠ
-    print(string)
-    time.sleep(0.05)
 
 def cut(int):
     if int >= 0:
